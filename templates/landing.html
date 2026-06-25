@@ -23,7 +23,7 @@
     </p>
     <div class="hero-actions">
         <a href="{{ url_for('register') }}" class="btn-primary">Create free account</a>
-        <a href="{{ url_for('login') }}" class="btn-primary">See how it works</a>
+        <a href="#" class="btn-primary" id="seeHowBtn">See how it works</a>
     </div>
     <div class="hero-dashboard">
         <div class="dashboard-chrome">
@@ -103,4 +103,58 @@
     </div>
 </section>
 
+<div class="video-modal" id="videoModal" aria-hidden="true">
+    <div class="video-modal-overlay" id="videoOverlay"></div>
+    <div class="video-modal-dialog">
+        <button class="video-modal-close" id="videoClose" aria-label="Close">&times;</button>
+        <div class="video-modal-frame">
+            <iframe id="videoIframe"
+                    src=""
+                    data-src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var modal    = document.getElementById('videoModal');
+    var overlay  = document.getElementById('videoOverlay');
+    var closeBtn = document.getElementById('videoClose');
+    var iframe   = document.getElementById('videoIframe');
+    var openBtn  = document.getElementById('seeHowBtn');
+    var videoSrc = iframe.dataset.src;
+
+    function openModal() {
+        iframe.src = videoSrc;
+        modal.classList.add('is-open');
+        modal.removeAttribute('aria-hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        iframe.src = '';
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    openBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        openModal();
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeModal();
+    });
+}());
+</script>
 {% endblock %}
