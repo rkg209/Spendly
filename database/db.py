@@ -1,6 +1,6 @@
 import sqlite3
 import os
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "spendly.db")
 
@@ -35,6 +35,22 @@ def init_db():
     """)
     conn.commit()
     conn.close()
+
+
+def create_user(name, email, password):
+    """Insert a new user. Returns the new user's id, or None if email is taken."""
+    conn = get_db()
+    try:
+        cursor = conn.execute(
+            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+            (name.strip(), email.strip().lower(), generate_password_hash(password)),
+        )
+        conn.commit()
+        return cursor.lastrowid
+    except sqlite3.IntegrityError:
+        return None
+    finally:
+        conn.close()
 
 
 def seed_db():
